@@ -15,6 +15,10 @@ COPY tutorial-cli/src ./src
 RUN npm run build && npm prune --omit=dev
 
 FROM node:22-bookworm-slim AS base
+# The template projects and the robot reference install below have no lockfiles, and npm 10 from
+# the Node 22 image crashes on fresh peer resolution ("Cannot read properties of null (reading
+# 'edgesOut')"); newer npm resolves it. Locked installs above use npm ci instead.
+RUN npm install -g npm@12.2.3 --no-audit --no-fund
 ARG TARGETARCH
 ARG CODE_SERVER_VERSION=4.140.0
 ENV DEBIAN_FRONTEND=noninteractive
