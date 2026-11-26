@@ -73,8 +73,9 @@ services:
     image: adminer:latest
     environment:
       ADMINER_DEFAULT_SERVER: db
-      # Only the tutorial page may embed Adminer (see adminer/ce-academy.php)
-      ADMINER_FRAME_ANCESTORS: http://localhost:${PLATFORM_PORT:-4000} http://127.0.0.1:${PLATFORM_PORT:-4000}
+      # Only the tutorial page may embed Adminer. The hostname is whatever the learner opened the
+      # course from (localhost, or a VM address), so allow any host on the platform port.
+      ADMINER_FRAME_ANCESTORS: http://*:${PLATFORM_PORT:-4000} http://localhost:${PLATFORM_PORT:-4000} http://127.0.0.1:${PLATFORM_PORT:-4000}
     volumes:
       - ./adminer/ce-academy.php:/var/www/html/plugins-enabled/ce-academy.php:ro
     ports:
