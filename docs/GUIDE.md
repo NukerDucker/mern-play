@@ -103,7 +103,7 @@ Browser ── :4000 ──► platform (static tutorial + lessons + Swagger + s
 
 - `platform` only serves pages and reports whether services are up. It sends no commands to the workspaces and has no Docker access.
 - You work in the workspace with the `tutorial` command in the terminal. Nothing on the lesson page changes your files.
-- All published ports are bound to `127.0.0.1` (this computer only). The database passwords are throw-away values for local use.
+- All published ports are bound to `127.0.0.1` (this computer only) by default. Set `BIND_ADDR=0.0.0.0` in `.env` to publish them on every interface; do this only on a machine other computers must reach (for example a department VM), and note that the lesson page embeds services by `localhost`, so browse from the machine itself. The database passwords are throw-away values for local use.
 - The details and the reasons are in [ARCHITECTURE.md](../ARCHITECTURE.md).
 
 ## For course authors
