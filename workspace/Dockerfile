@@ -6,9 +6,10 @@
 # Everything is installed at build time so the running workspace needs no internet.
 
 FROM node:22-bookworm-slim AS cli-build
+# The lockfile is copied so npm ci resolves nothing at install time (npm 10 from the image crashes on fresh peer resolution).
 WORKDIR /cli
-COPY tutorial-cli/package.json ./
-RUN npm install --no-audit --no-fund
+COPY tutorial-cli/package.json tutorial-cli/package-lock.json ./
+RUN npm ci --no-audit --no-fund
 COPY tutorial-cli/tsconfig.json tutorial-cli/tsconfig.build.json ./
 COPY tutorial-cli/src ./src
 RUN npm run build && npm prune --omit=dev

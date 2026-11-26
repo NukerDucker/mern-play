@@ -2,8 +2,9 @@
 # Platform: serves the tutorial UI and lessons and reports service status. No commands reach the workspaces.
 FROM node:22-bookworm-slim AS build
 WORKDIR /api
-COPY api/package.json ./
-RUN npm install --no-audit --no-fund
+# The lockfile is copied so npm ci resolves nothing at install time (npm 10 from the image crashes on fresh peer resolution).
+COPY api/package.json api/package-lock.json ./
+RUN npm ci --no-audit --no-fund
 COPY api/tsconfig.json api/tsconfig.build.json ./
 COPY api/src ./src
 RUN npm run build && npm prune --omit=dev
