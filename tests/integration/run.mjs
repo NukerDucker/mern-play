@@ -253,8 +253,10 @@ function contract(label, port, { prepare, exercises }) {
     call('listTasks');
     call('listTasks', { query: '?done=0&group_id=1&sort=due_date&order=desc' });
     call('listTasks', { query: '?sort=nope' });
+    call('listTasks', { query: '?sort=constructor' });
     const created = call('createTask', { body: { title: 'Contract task', group_id: 1, priority: 3, due_date: '2030-01-31' } });
     call('createTask', { body: { title: '' } });
+    call('createTask', { body: { title: 'Impossible date', due_date: '2026-02-30' } });
     const id = created.json?.id;
     call('getTask', { path: id });
     call('getTask', { path: 999999 });
