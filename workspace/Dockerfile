@@ -6,6 +6,8 @@
 # Everything is installed at build time so the running workspace needs no internet.
 
 FROM node:22-bookworm-slim AS cli-build
+# npm 10 from the Node 22 image crashes on vitest peer resolution when no lockfile is copied; npm 12 resolves it.
+RUN npm install -g npm@12.2.3 --no-audit --no-fund
 WORKDIR /cli
 COPY tutorial-cli/package.json ./
 RUN npm install --no-audit --no-fund
@@ -14,6 +16,8 @@ COPY tutorial-cli/src ./src
 RUN npm run build && npm prune --omit=dev
 
 FROM node:22-bookworm-slim AS base
+# npm 10 from the Node 22 image crashes on vitest peer resolution when no lockfile is copied; npm 12 resolves it.
+RUN npm install -g npm@12.2.3 --no-audit --no-fund
 ARG TARGETARCH
 ARG CODE_SERVER_VERSION=4.140.0
 ENV DEBIAN_FRONTEND=noninteractive

@@ -68,6 +68,7 @@ export function createServer(config: PlatformConfig): http.Server {
           return sendJson(res, 400, { error: 'Bad request path' });
         }
 
+        if (pathname === '/health') return sendJson(res, 200, { status: 'ok' });
         if (pathname === '/api/course') {
           try {
             return sendJson(res, 200, publicCourse(loadModules(config.courseDir)));
