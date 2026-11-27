@@ -1,6 +1,7 @@
 name: ce-webdev-academy
 
-# All published ports are bound to 127.0.0.1 and can be changed in .env.
+# All published ports are bound to 127.0.0.1 (this computer) by default and can be changed in .env.
+# For a server that other computers must reach (e.g. a department VM), set BIND_ADDR=0.0.0.0.
 # "internal" has no internet access; services that publish ports also join "public".
 
 services:
@@ -28,7 +29,7 @@ services:
       PUBLIC_STYLE_API_PORT: ${STYLE_API_PORT:-3002}
       PUBLIC_REPORT_PORT: ${ROBOT_REPORT_PORT:-9323}
     ports:
-      - "127.0.0.1:${PLATFORM_PORT:-4000}:4000"
+      - "${BIND_ADDR:-127.0.0.1}:${PLATFORM_PORT:-4000}:4000"
     volumes:
       - ./course:/course:ro
       - ./platform/ui:/app/ui:ro
@@ -72,12 +73,13 @@ services:
     image: adminer:latest
     environment:
       ADMINER_DEFAULT_SERVER: db
-      # Only the tutorial page may embed Adminer (see adminer/ce-academy.php)
-      ADMINER_FRAME_ANCESTORS: http://localhost:${PLATFORM_PORT:-4000} http://127.0.0.1:${PLATFORM_PORT:-4000}
+      # Only the tutorial page may embed Adminer. The hostname is whatever the learner opened the
+      # course from (localhost, or a VM address), so allow any host on the platform port.
+      ADMINER_FRAME_ANCESTORS: http://*:${PLATFORM_PORT:-4000} http://localhost:${PLATFORM_PORT:-4000} http://127.0.0.1:${PLATFORM_PORT:-4000}
     volumes:
       - ./adminer/ce-academy.php:/var/www/html/plugins-enabled/ce-academy.php:ro
     ports:
-      - "127.0.0.1:${DBADMIN_PORT:-8085}:8080"
+      - "${BIND_ADDR:-127.0.0.1}:${DBADMIN_PORT:-8085}:8080"
     networks: [public, internal]
     depends_on:
       db: { condition: service_healthy }
@@ -98,11 +100,11 @@ services:
       # Extra hostnames the Vite dev servers accept (comma-separated), for a DNS name in front of the course.
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-}
     ports:
-      - "127.0.0.1:${WS_MAIN_PORT:-8081}:8080"   # code-server
-      - "127.0.0.1:${EXPRESS_PORT:-3000}:3000"   # learner's Express (build module)
-      - "127.0.0.1:${VITE_PORT:-5173}:5173"      # learner's Vite (build module)
-      - "127.0.0.1:${VITE_STYLE_PORT:-5174}:5174" # learner's Vite (style module)
-      - "127.0.0.1:${STYLE_API_PORT:-3002}:3002" # reference API for module style
+      - "${BIND_ADDR:-127.0.0.1}:${WS_MAIN_PORT:-8081}:8080"   # code-server
+      - "${BIND_ADDR:-127.0.0.1}:${EXPRESS_PORT:-3000}:3000"   # learner's Express (build module)
+      - "${BIND_ADDR:-127.0.0.1}:${VITE_PORT:-5173}:5173"      # learner's Vite (build module)
+      - "${BIND_ADDR:-127.0.0.1}:${VITE_STYLE_PORT:-5174}:5174" # learner's Vite (style module)
+      - "${BIND_ADDR:-127.0.0.1}:${STYLE_API_PORT:-3002}:3002" # reference API for module style
     volumes:
       - ws-build:/workspace/build
       - ws-style:/workspace/style
@@ -137,9 +139,9 @@ services:
       TUTORIAL_DB_USER: robot
       TUTORIAL_DB_PASSWORD: robot_pw
     ports:
-      - "127.0.0.1:${WS_ROBOT_PORT:-8083}:8080"       # code-server
-      - "127.0.0.1:${REFERENCE_API_PORT:-3001}:3001"  # reference API
-      - "127.0.0.1:${ROBOT_REPORT_PORT:-9323}:9323"   # Robot report
+      - "${BIND_ADDR:-127.0.0.1}:${WS_ROBOT_PORT:-8083}:8080"       # code-server
+      - "${BIND_ADDR:-127.0.0.1}:${REFERENCE_API_PORT:-3001}:3001"  # reference API
+      - "${BIND_ADDR:-127.0.0.1}:${ROBOT_REPORT_PORT:-9323}:9323"   # Robot report
     volumes:
       - ws-api:/workspace/api
       - ./course:/course:ro

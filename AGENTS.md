@@ -44,7 +44,7 @@ docker compose -f docker-compose.tools.yml run --rm test             # unit test
 docker compose -f docker-compose.tools.yml run --rm lint-lessons     # lessons vs lesson.yaml, OpenAPI, finished projects
 docker compose -f docker-compose.tools.yml run --rm snapshots-check  # snapshots up to date (use `snapshots` to write them)
 docker compose -f docker-compose.tools.yml run --rm lint             # ESLint (also format, format-check)
-sh tests/integration/run.sh                        # whole course in a private stack `ce-it`; ONLY=build|style|unit|api, KEEP=1
+sh tests/integration/run.sh                        # whole course in a private stack `ce-it`; ONLY=build|style|unit|api, KEEP=1 (run `npm ci` in platform/api once first)
 ```
 
 Before saying a change is done run `test`, `lint-lessons`, `snapshots-check`, `format-check` and, if you touched the app, a check, a lesson or the CLI, the integration test for that module. Report failures as they are.
